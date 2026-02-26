@@ -16,73 +16,82 @@ const result = document.getElementById("result")
 
 
 
-// 1º INICIO // Manipulando o ipunt para receber somente números
-amount.addEventListener("input" , () => {
+// 1º INICIO // Manipulando o input para receber somente números e aplicar máscara de moeda
+amount.addEventListener("input", () => {
+  // Remove caracteres não-numéricos
+  let value = amount.value.replace(/\D/g, "")
 
-// 2º utilizando a expressão do regex para receber somente números no input
-const hasCharacterRegex = /\D+/g
-amount.value = amount.value.replace(hasCharacterRegex,"")
+  // Converte para centavos e formata como BRL (R$ 0,00)
+  value = Number(value) / 100
 
+  // Se o valor for 0, limpa o campo ou mantém formatado? O usuário pediu que apareça sempre R$ 5,00.
+  // Vamos formatar para que apareça sempre no padrão R$ 0,00 enquanto digita.
+  amount.value = value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  })
 })
 
 // 3º captando o evento de submit (enviar) do formulário
-
 form.onsubmit = (event) => {
-event.preventDefault() 
-//5º criando switch para analisar os casos.
-switch(currency.value){ 
- case"USD":
-convertCurrency(amount.value, USD,"US$")
-break
- case "EUR":
-convertCurrency(amount.value,EUR,"€")
- break
- case"GBP":
-convertCurrency(amount.value, GBP,"£")
-break
-}
+  event.preventDefault()
+
+  // Extrai apenas os números do valor formatado para a conversão
+  const numericValue = amount.value.replace(/\D/g, "") / 100
+
+  switch (currency.value) {
+    case "USD":
+      convertCurrency(numericValue, USD, "US$")
+      break
+    case "EUR":
+      convertCurrency(numericValue, EUR, "€")
+      break
+    case "GBP":
+      convertCurrency(numericValue, GBP, "£")
+      break
+  }
 }
 
 // 4º Função para converter moeda
 
 //5º adicionando o footer
-function convertCurrency (amount,price,symbol){
-    try {
-        // 6ºmanipulando o conteudo da description `utilizando interpolação`
-        description.textContent = `${symbol} 1 = ${formatCurrencyBRL(price)}` 
-    
-        // calcula o total
-        let total = amount * price 
+function convertCurrency(amount, price, symbol) {
+  try {
+    // 6ºmanipulando o conteudo da description `utilizando interpolação`
+    description.textContent = `${symbol} 1 = ${formatCurrencyBRL(price)}`
 
-      if(isNaN (total)){
-        return alert ("Por favor, digite o valor corretamente para converter.")
-      }
+    // calcula o total
+    let total = amount * price
 
-        // FORMATA O VALOR TOTAL
-       total = formatCurrencyBRL(total).replace("R$","")
-
-        // exibe o resultado total 
-        result.textContent = `${total} Reais`
-
-        // aplica classe que exibe o footer para mostrar o resultado.
-        footer.classList.add("show-result")
-    } catch (error) {
-        // Remove a classe do footer removendo ele da tela
-        footer.classList.remover("show-result")
-        alert("não foi possível converter. Tente novamente mais tarde.")
-
+    if (isNaN(total)) {
+      return alert("Por favor, digite o valor corretamente para converter.")
     }
+
+    // FORMATA O VALOR TOTAL
+    total = formatCurrencyBRL(total).replace("R$", "")
+
+    // exibe o resultado total 
+    result.textContent = `${total} Reais`
+
+    // aplica classe que exibe o footer para mostrar o resultado.
+    footer.classList.add("show-result")
+  } catch (error) {
+    // Remove a classe do footer removendo ele da tela
+    footer.classList.remover("show-result")
+    alert("não foi possível converter. Tente novamente mais tarde.")
+
+  }
 
 }
 
 // formata a moeda em real brasileiro
-function formatCurrencyBRL(value){
-    // converte para número para utilizar o toLocaleString para formatar no padrão BRL
-return Number(value).toLocaleString("pt-BR", {
+function formatCurrencyBRL(value) {
+  // converte para número para utilizar o toLocaleString para formatar no padrão BRL
+  return Number(value).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
-}
-)
+  }
+  )
 
 
 }
