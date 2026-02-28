@@ -27,7 +27,7 @@ Aplicativo web simples que converte valores entre diferentes moedas utilizando d
 - HTML  
 - CSS  
 - JavaScript  
-- APIs para obter taxas de câmbio.S  
+- APIs para obter taxas de câmbio  
 - Git & GitHub Pages (Deploy)
 
 ---
